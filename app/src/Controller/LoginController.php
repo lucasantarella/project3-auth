@@ -35,7 +35,7 @@ class LoginController
         }
 
         // application specific login logic
-        $user = $userRepository->findOne(['username' => $login->getField('username')]);
+        $user = $userRepository->getUserByUsername($login->getField('username'));
         if (
             $user === null
             || !password_verify($login->getField('password'), $user->password)
@@ -47,6 +47,14 @@ class LoginController
         }
 
         // create token
+        $this->auth->start(
+            $this->authTokens->create(['userID' => $user->id])
+        );
+
+        return [
+            'status' => 200,
+            'message' => 'Authenticated!'
+        ];
     }
 
 }

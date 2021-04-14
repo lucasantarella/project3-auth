@@ -44,16 +44,21 @@ class UserRepository implements ActorProviderInterface
         if (count($results) !== 1)
             return null;
 
-        $user = new User();
-        $user->id = $results[0]['id'];
-        $user->username = $results[0]['username'];
-        $user->password = $results[0]['password'];
-        $user->first_name = $results[0]['first_name'];
-        $user->last_name = $results[0]['last_name'];
-        $user->email = $results[0]['email'];
-        $user->status = $results[0]['status'];
-        $user->created_at = $results[0]['created_at'];
-        return $user;
+        return User::FromDbRow($results[0]);
+    }
+
+    public function getUserByUsername(string $username): ?User
+    {
+        $results = $this->db->table('users__')
+            ->select()
+            ->where('username', $username)
+            ->limit(1)
+            ->fetchAll();
+
+        if (count($results) !== 1)
+            return null;
+
+        return User::FromDbRow($results[0]);
     }
 
     /**
