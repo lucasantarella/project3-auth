@@ -40,7 +40,7 @@ class OrmDefault6e8bce0ed265da434bea8088fa3aa4ed extends Migration
             ->addColumn('id', 'string', [
                 'nullable' => false,
                 'default'  => null,
-                'size'     => 32
+                'size'     => 36
             ])
             ->addColumn('username', 'string', [
                 'nullable' => false,
@@ -72,6 +72,7 @@ class OrmDefault6e8bce0ed265da434bea8088fa3aa4ed extends Migration
                 'default'  => null
             ])
             ->setPrimaryKeys(["id"])
+            ->addIndex(['username'], ['unique' => true])
             ->create();
     }
 

@@ -5,6 +5,7 @@ namespace App\Database\Repository;
 
 
 use App\Database\User;
+use DateTime;
 use Spiral\Auth\ActorProviderInterface;
 use Spiral\Auth\TokenInterface;
 use Spiral\Database\Database;
@@ -29,9 +30,14 @@ class UserRepository implements ActorProviderInterface
             return null;
         }
 
+        return $this->getUserById($token->getPayload()['userID']);
+    }
+
+    public function getUserById(string $id): ?User
+    {
         $results = $this->db->table('users__')
             ->select()
-            ->where('id', $token->getPayload()['userID'])
+            ->where('id', $id)
             ->limit(1)
             ->fetchAll();
 
@@ -39,6 +45,7 @@ class UserRepository implements ActorProviderInterface
             return null;
 
         $user = new User();
+        $user->id = $results[0]['id'];
         $user->username = $results[0]['username'];
         $user->password = $results[0]['password'];
         $user->first_name = $results[0]['first_name'];
@@ -47,6 +54,25 @@ class UserRepository implements ActorProviderInterface
         $user->status = $results[0]['status'];
         $user->created_at = $results[0]['created_at'];
         return $user;
+    }
+
+    /**
+     * @param User $user
+     * @return int|string|null
+     */
+    public function createUser(User $user)
+    {
+        return $this->db->table('users__')
+            ->insertOne([
+                'id' => $user->id,
+                'username' => $user->username,
+                'password' => $user->password,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'status' => $user->status,
+                'created_at' => new DateTime(),
+            ]);
     }
 
 }
