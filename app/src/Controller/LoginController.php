@@ -6,6 +6,9 @@ namespace App\Controller;
 
 use App\Database\Repository\UserRepository;
 use App\Request\LoginRequest;
+use DateTimeImmutable;
+use Lcobucci\JWT\Configuration as JwtConfiguration;
+use Ramsey\Uuid\Uuid;
 use Spiral\Prototype\Traits\PrototypeTrait;
 
 class LoginController
@@ -25,7 +28,7 @@ class LoginController
      * @param LoginRequest $login
      * @return array
      */
-    public function post(LoginRequest $login, UserRepository $userRepository): array
+    public function post(LoginRequest $login, UserRepository $userRepository, JwtConfiguration $jwtConfig): array
     {
         if (!$login->isValid()) {
             return [
@@ -51,9 +54,21 @@ class LoginController
             $this->authTokens->create(['userID' => $user->id])
         );
 
+        // create id_token
+        $now   = new DateTimeImmutable();
+        $token = $jwtConfig->builder()
+            ->issuedBy('https://cs490.lucasantarella.com')
+            ->permittedFor('https://cs490.lucasantarella.com')
+            ->identifiedBy(Uuid::uuid4())
+            ->issuedAt($now)
+            ->expiresAt($now->modify('+1 hour'))
+            ->withClaim('uid', (string)$user->id)
+            ->getToken($jwtConfig->signer(), $jwtConfig->signingKey());
+
         return [
             'status' => 200,
-            'message' => 'Authenticated!'
+            'message' => 'Authenticated!',
+            'id_token' => $token->toString()
         ];
     }
 

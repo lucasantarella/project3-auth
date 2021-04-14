@@ -21,6 +21,7 @@
         "cycle/migrations": "^1.0",
         "cycle/orm": "^1.0",
         "cycle/proxy-factory": "^1.0",
+        "lcobucci/jwt": "^4.1",
         "ramsey/uuid": "^4.1",
         "spiral/auth": "^2.7",
         "spiral/auth-http": "^2.7",
