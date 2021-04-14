@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace App\Bootloader;
 
+use App\Controller\AuthenticatedController;
 use App\Controller\LoginController;
+use App\Controller\RegisterController;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Router\Route;
 use Spiral\Router\RouterInterface;
@@ -28,6 +30,7 @@ class RoutesBootloader extends Bootloader
     public function boot(RouterInterface $router): void
     {
         $loginRoute = new Route('/login', new Controller(LoginController::class));
+        $registerRoute = new Route('/register', new Controller(RegisterController::class));
 
         $router->setRoute(
             'login.get',
@@ -37,6 +40,22 @@ class RoutesBootloader extends Bootloader
         $router->setRoute(
             'login.post',
             $loginRoute->withVerbs('POST')->withDefaults(['action' => 'post'])
+        );
+
+
+        $router->setRoute(
+            'register.get',
+            $registerRoute->withVerbs('GET')->withDefaults(['action' => 'get'])
+        );
+
+        $router->setRoute(
+            'register.post',
+            $registerRoute->withVerbs('POST')->withDefaults(['action' => 'post'])
+        );
+
+        $router->setRoute(
+            'authenticated.get',
+            new Route('/authenticated', new Action(AuthenticatedController::class, 'index'))
         );
 
     }
