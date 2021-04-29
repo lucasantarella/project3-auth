@@ -70,6 +70,9 @@ class App extends Kernel
         Framework\Views\ViewsBootloader::class,
         Framework\Views\TranslatedCacheBootloader::class,
 
+        // Additional dispatchers
+        Framework\Jobs\JobsBootloader::class,
+
         // Extensions and bridges
         Stempler\StemplerBootloader::class,
 
